@@ -26,7 +26,7 @@ export default function App() {
     if (id === -1) {
       return (
         <TouchableOpacity onPress={onPressOpenGallery} style={styles.button}>
-          <Text style={{ fontWeight: "100", fontSize: 45 }}>+</Text>
+          <Text style={{ fontWeight: "100", fontSize: 50 }}>+</Text>
         </TouchableOpacity>
       );
     }

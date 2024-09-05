@@ -1,35 +1,50 @@
-import { Button, StyleSheet, View, Image } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  Image,
+  FlatList,
+  SafeAreaView,
+  Platform,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+import { useGallery } from "./src/use-gallery";
+
+const width = Dimensions.get("screen").width;
+const columnSize = width / 3;
 
 export default function App() {
-  const [image, setImage] = useState(null);
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
+  const { images, imagesWithAddButton, pickImage, deleteImage } = useGallery();
 
   const onPressOpenGallery = () => {
     pickImage();
   };
 
+  const onLongPressImage = (imageId) => deleteImage(imageId);
+
+  const renderItem = ({ item: { id, uri }, index }) => {
+    if (id === -1) {
+      return (
+        <TouchableOpacity onPress={onPressOpenGallery} style={styles.button}>
+          <Text style={{ fontWeight: "100", fontSize: 45 }}>+</Text>
+        </TouchableOpacity>
+      );
+    }
+    return (
+      <TouchableOpacity onLongPress={() => onLongPressImage(id)}>
+        <Image source={{ uri }} style={styles.image} />
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <View style={styles.container}>
-      <Button title="갤러리 열기" onPress={onPressOpenGallery} />
-      {image && <Image source={{ uri: image }} style={styles.image} />}
-    </View>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={imagesWithAddButton}
+        renderItem={renderItem}
+        numColumns={3}
+      />
+    </SafeAreaView>
   );
 }
 
@@ -39,9 +54,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: Platform.OS === "android" ? 40 : 0,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: columnSize,
+    height: columnSize,
+  },
+  button: {
+    width: columnSize,
+    height: columnSize,
+    backgroundColor: "lightgrey",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

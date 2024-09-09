@@ -2,8 +2,16 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { Alert } from "react-native";
 
+const defaultAlbum = {
+  id: 1,
+  title: "기본",
+};
+
 export const useGallery = () => {
   const [images, setImages] = useState([]);
+  const [selectedAlbum, setSelectedAlbum] = useState(defaultAlbum);
+  const [albums, setAlbums] = useState([defaultAlbum]);
+  const [modalVisible, setModalVisible] = useState(false);
   // {
   //   id : numner,
   //   uri : string,
@@ -47,6 +55,9 @@ export const useGallery = () => {
     ]);
   };
 
+  const openModal = () => setModalVisible(true);
+  const closeModal = () => setModalVisible(false);
+
   const imagesWithAddButton = [
     ...images,
     {
@@ -60,5 +71,9 @@ export const useGallery = () => {
     imagesWithAddButton,
     pickImage,
     deleteImage,
+    selectedAlbum,
+    modalVisible,
+    openModal,
+    closeModal,
   };
 };

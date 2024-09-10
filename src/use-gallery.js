@@ -12,6 +12,7 @@ export const useGallery = () => {
   const [selectedAlbum, setSelectedAlbum] = useState(defaultAlbum);
   const [albums, setAlbums] = useState([defaultAlbum]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [albumTitle, setAlbumTitle] = useState("");
   // {
   //   id : numner,
   //   uri : string,
@@ -57,6 +58,16 @@ export const useGallery = () => {
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
+  const addAlbum = () => {
+    const lastId = albums.length === 0 ? 0 : albums[albums.length - 1].id;
+    const newAlbum = {
+      id: lastId + 1,
+      title: albumTitle,
+    };
+    setAlbums([...albums, newAlbum]);
+  };
+
+  const resetAlbumTitle = () => setAlbumTitle("");
 
   const imagesWithAddButton = [
     ...images,
@@ -75,5 +86,9 @@ export const useGallery = () => {
     modalVisible,
     openModal,
     closeModal,
+    albumTitle,
+    setAlbumTitle,
+    addAlbum,
+    resetAlbumTitle,
   };
 };

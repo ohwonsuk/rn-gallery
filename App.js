@@ -28,6 +28,10 @@ export default function App() {
     setAlbumTitle,
     addAlbum,
     resetAlbumTitle,
+    isDropdownOpen,
+    openDropDown,
+    closeDropDown,
+    albums,
   } = useGallery();
 
   const onPressOpenGallery = () => {
@@ -50,6 +54,14 @@ export default function App() {
 
   const onPressBackdrop = () => closeModal();
 
+  const onPressHeader = () => {
+    if (isDropdownOpen) {
+      closeDropDown();
+    } else {
+      openDropDown();
+    }
+  };
+
   const renderItem = ({ item: { id, uri }, index }) => {
     if (id === -1) {
       return (
@@ -71,6 +83,9 @@ export default function App() {
       <MyDropDownPicker
         selectedAlbumTitle={selectedAlbum.title}
         onPressAddAlbum={onPressAddAlbum}
+        isDropdownOpen={isDropdownOpen}
+        onPressHeader={onPressHeader}
+        albums={albums}
       />
 
       {/* 앨범을 추가하는 TextInputModal */}
@@ -87,6 +102,7 @@ export default function App() {
         data={imagesWithAddButton}
         renderItem={renderItem}
         numColumns={3}
+        style={{ zIndex: -1 }} //header보다 코드가 밑에 있어 헤더위에 보여지는 것을 방지
       />
     </SafeAreaView>
   );

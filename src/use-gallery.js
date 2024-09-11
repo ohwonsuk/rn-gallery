@@ -71,10 +71,32 @@ export const useGallery = () => {
       title: albumTitle,
     };
     setAlbums([...albums, newAlbum]);
+    setSelectedAlbum(newAlbum);
   };
 
-  const selectAlumb = (album) => {
+  const selectAlbum = (album) => {
     setSelectedAlbum(album);
+  };
+
+  const deleteAlbum = (albumId) => {
+    if (albumId == defaultAlbum.id) {
+      Alert.alert("기본앨범은 삭제할 수 없어요!!");
+      return;
+    }
+    Alert.alert("앨범을 삭제하시겠어요?", "", [
+      {
+        style: "cancel",
+        text: "아니오",
+      },
+      {
+        text: "네",
+        onPress: () => {
+          const newAlbums = albums.filter((album) => album.id !== albumId);
+          setAlbums(newAlbums);
+          setSelectedAlbum(defaultAlbum);
+        },
+      },
+    ]);
   };
 
   const resetAlbumTitle = () => setAlbumTitle("");
@@ -90,9 +112,10 @@ export const useGallery = () => {
     },
   ];
 
-  useEffect(() => {
-    console.log("images", images);
-  }, [images]);
+  // 이미지 변경시 로그 확인하기
+  // useEffect(() => {
+  //   console.log("images", images);
+  // }, [images]);
 
   return {
     images,
@@ -111,6 +134,7 @@ export const useGallery = () => {
     openDropDown,
     closeDropDown,
     albums,
-    selectAlumb,
+    selectAlbum,
+    deleteAlbum,
   };
 };

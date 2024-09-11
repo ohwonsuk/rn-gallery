@@ -4,12 +4,14 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 const headerHeight = 50;
 
 export default ({
-  selectedAlbumTitle,
   onPressAddAlbum,
   isDropdownOpen,
   onPressHeader,
   albums,
+  onPressAlbum,
+  selectedAlbum,
 }) => {
+  // console.log("drop_selectedAlbum", selectedAlbum);
   return (
     <View>
       <TouchableOpacity
@@ -22,7 +24,7 @@ export default ({
           flexDirection: "row",
         }}
       >
-        <Text style={{ fontWeight: "bold" }}>{selectedAlbumTitle}</Text>
+        <Text style={{ fontWeight: "bold" }}>{selectedAlbum.title}</Text>
         <SimpleLineIcons
           name={isDropdownOpen ? "arrow-down" : "arrow-up"}
           size={12}
@@ -50,14 +52,34 @@ export default ({
             top: headerHeight,
             width: "100%",
             height: 100,
-            backgroundColor: "lightblue",
+            borderTopColor: "lightgrey",
+            borderTopWidth: 0.5,
+            borderBottomColor: "lightgrey",
+            borderBottomWidth: 0.5,
           }}
         >
-          {albums.map((album, index) => (
-            <TouchableOpacity key={`album-${index}`}>
-              <Text>{album.title}</Text>
-            </TouchableOpacity>
-          ))}
+          {albums.map((album, index) => {
+            const isSelectedAlbum = album.id === selectedAlbum.id;
+            return (
+              <TouchableOpacity
+                key={`album-${index}`}
+                style={{
+                  paddingVertical: 12,
+                  width: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#fff",
+                }}
+                onPress={() => onPressAlbum(album)}
+              >
+                <Text
+                  style={{ fontWeight: isSelectedAlbum ? "bold" : undefined }}
+                >
+                  {album.title}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       )}
     </View>

@@ -32,6 +32,7 @@ export default function App() {
     openDropDown,
     closeDropDown,
     albums,
+    selectAlumb,
   } = useGallery();
 
   const onPressOpenGallery = () => {
@@ -62,6 +63,11 @@ export default function App() {
     }
   };
 
+  const onPressAlbum = (album) => {
+    selectAlumb(album);
+    closeDropDown();
+  };
+
   const renderItem = ({ item: { id, uri }, index }) => {
     if (id === -1) {
       return (
@@ -77,15 +83,17 @@ export default function App() {
     );
   };
 
+  // console.log("selectedAlbum", selectedAlbum);
   return (
     <SafeAreaView style={styles.container}>
       {/* 앨범 DropDown, 앨범 추가 버튼 */}
       <MyDropDownPicker
-        selectedAlbumTitle={selectedAlbum.title}
+        selectedAlbum={selectedAlbum}
         onPressAddAlbum={onPressAddAlbum}
         isDropdownOpen={isDropdownOpen}
         onPressHeader={onPressHeader}
         albums={albums}
+        onPressAlbum={onPressAlbum}
       />
 
       {/* 앨범을 추가하는 TextInputModal */}

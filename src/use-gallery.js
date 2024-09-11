@@ -1,10 +1,11 @@
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 const defaultAlbum = {
   id: 1,
   title: "기본",
+  albumId: 1,
 };
 
 export const useGallery = () => {
@@ -35,6 +36,7 @@ export const useGallery = () => {
       const newImage = {
         id: lastId + 1,
         uri: result.assets[0].uri,
+        albumId: selectedAlbum.id,
       };
       console.log("images", newImage);
       setImages([...images, newImage]);
@@ -71,15 +73,26 @@ export const useGallery = () => {
     setAlbums([...albums, newAlbum]);
   };
 
+  const selectAlumb = (album) => {
+    setSelectedAlbum(album);
+  };
+
   const resetAlbumTitle = () => setAlbumTitle("");
 
+  const filteredImages = images.filter(
+    (image) => image.albumId === selectedAlbum.id
+  );
   const imagesWithAddButton = [
-    ...images,
+    ...filteredImages,
     {
       id: -1,
       uri: "",
     },
   ];
+
+  useEffect(() => {
+    console.log("images", images);
+  }, [images]);
 
   return {
     images,
@@ -98,5 +111,6 @@ export const useGallery = () => {
     openDropDown,
     closeDropDown,
     albums,
+    selectAlumb,
   };
 };

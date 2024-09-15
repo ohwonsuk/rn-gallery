@@ -1,20 +1,9 @@
-import {
-  StyleSheet,
-  Text,
-  Image,
-  FlatList,
-  SafeAreaView,
-  Platform,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, SafeAreaView, Platform, Alert } from "react-native";
 import { useGallery } from "./src/use-gallery";
 import MyDropDownPicker from "./src/MyDropDownPicker";
 import TextInputModal from "./src/TextInputModal";
 import BigImgModal from "./src/BigImgModal";
-
-const width = Dimensions.get("screen").width;
-const columnSize = width / 3;
+import ImageList from "./src/ImageList";
 
 export default function App() {
   const {
@@ -51,8 +40,24 @@ export default function App() {
   };
 
   const onLongPressImage = (imageId) => deleteImage(imageId);
+  const onPressWatchAdd = () => {
+    console.log("loading Ad");
+  };
   const onPressAddAlbum = () => {
-    openTextInputModal();
+    if (albums.length >= 2) {
+      Alert.alert("광고를 시청해야 앨범을 추가할 수 있습니다.", "", [
+        {
+          style: "cancel",
+          text: "닫기",
+        },
+        {
+          text: "광고시청",
+          onPress: onPressWatchAdd,
+        },
+      ]);
+    } else {
+      openTextInputModal();
+    }
   };
 
   const onSubmitEditing = () => {
@@ -98,25 +103,6 @@ export default function App() {
     moveToNextImage();
   };
 
-  const renderItem = ({ item: image, index }) => {
-    const { id, uri } = image;
-    if (id === -1) {
-      return (
-        <TouchableOpacity onPress={onPressOpenGallery} style={styles.button}>
-          <Text style={{ fontWeight: "100", fontSize: 50 }}>+</Text>
-        </TouchableOpacity>
-      );
-    }
-    return (
-      <TouchableOpacity
-        onPress={() => onPressImage(image)}
-        onLongPress={() => onLongPressImage(id)}
-      >
-        <Image source={{ uri }} style={styles.image} />
-      </TouchableOpacity>
-    );
-  };
-
   // console.log("selectedAlbum", selectedAlbum);
   return (
     <SafeAreaView style={styles.container}>
@@ -152,11 +138,11 @@ export default function App() {
       />
 
       {/* 이미지 리스트 */}
-      <FlatList
-        data={imagesWithAddButton}
-        renderItem={renderItem}
-        numColumns={3}
-        style={{ zIndex: -1 }} //header보다 코드가 밑에 있어 헤더위에 보여지는 것을 방지
+      <ImageList
+        imagesWithAddButton={imagesWithAddButton}
+        onPressOpenGallery={onPressOpenGallery}
+        onPressImage={onPressImage}
+        onLongPressImage={onLongPressImage}
       />
     </SafeAreaView>
   );
@@ -169,16 +155,5 @@ const styles = StyleSheet.create({
     // justifyContent: "center",
     // alignItems: "center",
     marginTop: Platform.OS === "android" ? 40 : 0,
-  },
-  image: {
-    width: columnSize,
-    height: columnSize,
-  },
-  button: {
-    width: columnSize,
-    height: columnSize,
-    backgroundColor: "lightgrey",
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

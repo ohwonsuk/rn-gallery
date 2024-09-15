@@ -1,11 +1,17 @@
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const defaultAlbum = {
   id: 1,
   title: "기본",
   albumId: 1,
+};
+
+const ASYNC_KEY = {
+  IMAGES: "images",
+  ALBUMS: "albums",
 };
 
 export const useGallery = () => {
@@ -21,6 +27,16 @@ export const useGallery = () => {
   //   id : numner,
   //   uri : string,
   // }
+
+  const _setImages = (newImages) => {
+    setImages(newImages);
+    AsyncStorage.setItem(ASYNC_KEY.IMAGES, JSON.stringify(newImages));
+  };
+
+  const _setAlbums = (newAlbums) => {
+    setAlbums(newAlbums);
+    AsyncStorage.setItem(ASYNC_KEY.ALBUMS, JSON.stringify(newAlbums));
+  };
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -41,7 +57,7 @@ export const useGallery = () => {
         albumId: selectedAlbum.id,
       };
       console.log("images", newImage);
-      setImages([...images, newImage]);
+      _setImages([...images, newImage]);
     }
   };
 
@@ -55,7 +71,7 @@ export const useGallery = () => {
         text: "네",
         onPress: () => {
           const newImages = images.filter((image) => image.id !== imageId);
-          setImages(newImages);
+          _setImages(newImages);
         },
       },
     ]);
@@ -74,7 +90,7 @@ export const useGallery = () => {
       id: lastId + 1,
       title: albumTitle,
     };
-    setAlbums([...albums, newAlbum]);
+    _setAlbums([...albums, newAlbum]);
     setSelectedAlbum(newAlbum);
   };
 
@@ -96,7 +112,7 @@ export const useGallery = () => {
         text: "네",
         onPress: () => {
           const newAlbums = albums.filter((album) => album.id !== albumId);
-          setAlbums(newAlbums);
+          _setAlbums(newAlbums);
           setSelectedAlbum(defaultAlbum);
         },
       },
@@ -148,6 +164,27 @@ export const useGallery = () => {
       uri: "",
     },
   ];
+
+  const initValues = async () => {
+    // images
+    const imagesFromStorage = await AsyncStorage.getItem(ASYNC_KEY.IMAGES);
+    if (imagesFromStorage !== null) {
+      const parsed = JSON.parse(imagesFromStorage);
+      setImages(parsed);
+      console.log("imagesFromStorage", imagesFromStorage);
+    }
+    // albums
+    const albumsFromStorage = await AsyncStorage.getItem(ASYNC_KEY.ALBUMS);
+    if (albumsFromStorage !== null) {
+      const parsed = JSON.parse(albumsFromStorage);
+      setAlbums(parsed);
+      console.log("albumsFromStorage", albumsFromStorage);
+    }
+  };
+
+  useEffect(() => {
+    initValues();
+  }, []);
 
   // 이미지 변경시 로그 확인하기
   // useEffect(() => {
